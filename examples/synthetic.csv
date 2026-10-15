@@ -1,0 +1,5 @@
+timestamp,workload_compute_units,price_per_mwh,temperature_c
+2026-01-01T00:00:00Z,40,30,25
+2026-01-01T00:05:00Z,45,80,27
+2026-01-01T00:10:00Z,50,300,30
+2026-01-01T00:15:00Z,40,60,28

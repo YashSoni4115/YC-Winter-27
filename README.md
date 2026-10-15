@@ -2,7 +2,7 @@
 
 A software layer that decides, continuously and autonomously, how electrical power is distributed *inside* an AI data centre site: between compute, cooling, on-site storage, on-site generation, and the grid connection.
 
-> Status: early design draft. Everything below is a proposed design and a set of hypotheses to validate, not a description of a built system.
+> Status: the design below remains a set of hypotheses. An offline Python simulation, data, MILP planning, dispatch and evaluation foundation is implemented. Start with [developer setup](docs/DEVELOPMENT.md), [team integration](docs/INTEGRATION.md), and [verified progress](chat.md). Production ML, safety, backend, UI and plant integrations remain separate teammate workstreams.
 
 ---
 

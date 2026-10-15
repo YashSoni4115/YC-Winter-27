@@ -1,0 +1,189 @@
+{
+  "additionalProperties": false,
+  "description": "Canonical simulation-ready interval in UTC.\n\nIntervals are left-closed and right-open: ``[start, end)``. A nullable field\nmeans the source did not provide a trustworthy value; zero is never used as\nan implicit missing-value marker.",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "site_id": {
+      "minLength": 1,
+      "title": "Site Id",
+      "type": "string"
+    },
+    "interval_start_utc": {
+      "format": "date-time",
+      "title": "Interval Start Utc",
+      "type": "string"
+    },
+    "interval_end_utc": {
+      "format": "date-time",
+      "title": "Interval End Utc",
+      "type": "string"
+    },
+    "original_timestamp": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Original Timestamp"
+    },
+    "source_timezone": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Timezone"
+    },
+    "workload_demand_compute_units": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Workload Demand Compute Units"
+    },
+    "active_compute_capacity_compute_units_per_hour": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Active Compute Capacity Compute Units Per Hour"
+    },
+    "grid_import_price_per_mwh": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Grid Import Price Per Mwh"
+    },
+    "price_currency": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Z]{3}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Price Currency"
+    },
+    "ambient_temperature_c": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ambient Temperature C"
+    },
+    "grid_stress_status": {
+      "default": "unknown",
+      "enum": [
+        "normal",
+        "watch",
+        "emergency",
+        "curtailment",
+        "unknown"
+      ],
+      "title": "Grid Stress Status",
+      "type": "string"
+    },
+    "grid_available": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Grid Available"
+    },
+    "grid_carbon_intensity_kgco2e_per_mwh": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Grid Carbon Intensity Kgco2E Per Mwh"
+    },
+    "cooling_thermal_load_mwth": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cooling Thermal Load Mwth"
+    },
+    "quality_mask": {
+      "default": 0,
+      "maximum": 18446744073709551615,
+      "minimum": 0,
+      "title": "Quality Mask",
+      "type": "integer"
+    },
+    "lineage_id": {
+      "minLength": 1,
+      "title": "Lineage Id",
+      "type": "string"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    }
+  },
+  "required": [
+    "site_id",
+    "interval_start_utc",
+    "interval_end_utc",
+    "lineage_id"
+  ],
+  "title": "SimulationIntervalV1",
+  "type": "object"
+}

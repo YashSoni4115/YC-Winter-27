@@ -1,0 +1,6 @@
+include requirements-dev.lock
+include chat.md
+recursive-include docs *.md *.json
+recursive-include examples *.py *.csv *.json
+recursive-include tests *.py
+include .github/workflows/ci.yml
