@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.coverage
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.hypothesis/
+.venv/
+venv/
+build/
+dist/
+htmlcov/
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+
+# Local and externally sourced data. Only small, licensed/synthetic test fixtures belong in Git.
+data/raw/
+data/quarantine/
+data/processed/
+*.parquet
+
+# Generated reports and benchmark output
+artifacts/
+reports/generated/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+coverage.xml

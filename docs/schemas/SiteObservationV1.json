@@ -1,0 +1,322 @@
+{
+  "$defs": {
+    "DataQualityFlag": {
+      "description": "Per-value quality state used by telemetry and data pipelines.",
+      "enum": [
+        "good",
+        "estimated",
+        "imputed",
+        "missing",
+        "suspect",
+        "synthetic"
+      ],
+      "title": "DataQualityFlag",
+      "type": "string"
+    },
+    "GridStressStatus": {
+      "enum": [
+        "normal",
+        "elevated",
+        "emergency",
+        "outage",
+        "unknown"
+      ],
+      "title": "GridStressStatus",
+      "type": "string"
+    },
+    "QueuedWorkloadV1": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "remaining_compute_units": {
+          "minimum": 0.0,
+          "title": "Remaining Compute Units",
+          "type": "number"
+        },
+        "steps_to_deadline": {
+          "minimum": 1,
+          "title": "Steps To Deadline",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "remaining_compute_units",
+        "steps_to_deadline"
+      ],
+      "title": "QueuedWorkloadV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Complete state supplied to planners, policies, and the Gym adapter.",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "site_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$",
+      "title": "Site Id",
+      "type": "string"
+    },
+    "state_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$",
+      "title": "State Id",
+      "type": "string"
+    },
+    "timestamp_utc": {
+      "format": "date-time",
+      "title": "Timestamp Utc",
+      "type": "string"
+    },
+    "step_index": {
+      "minimum": 0,
+      "title": "Step Index",
+      "type": "integer"
+    },
+    "timestep_seconds": {
+      "exclusiveMinimum": 0.0,
+      "title": "Timestep Seconds",
+      "type": "number"
+    },
+    "workload_demand_compute_units_per_h": {
+      "minimum": 0.0,
+      "title": "Workload Demand Compute Units Per H",
+      "type": "number"
+    },
+    "active_compute_capacity_compute_units_per_h": {
+      "minimum": 0.0,
+      "title": "Active Compute Capacity Compute Units Per H",
+      "type": "number"
+    },
+    "critical_backlog_compute_units": {
+      "minimum": 0.0,
+      "title": "Critical Backlog Compute Units",
+      "type": "number"
+    },
+    "deferrable_backlog_compute_units": {
+      "minimum": 0.0,
+      "title": "Deferrable Backlog Compute Units",
+      "type": "number"
+    },
+    "queued_workloads": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/QueuedWorkloadV1"
+      },
+      "title": "Queued Workloads",
+      "type": "array"
+    },
+    "incoming_deferrable_fraction": {
+      "default": 0.0,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Incoming Deferrable Fraction",
+      "type": "number"
+    },
+    "incoming_deferrable_deadline_steps": {
+      "default": 1,
+      "minimum": 1,
+      "title": "Incoming Deferrable Deadline Steps",
+      "type": "integer"
+    },
+    "completed_compute_units": {
+      "minimum": 0.0,
+      "title": "Completed Compute Units",
+      "type": "number"
+    },
+    "deadline_violated_compute_units": {
+      "default": 0.0,
+      "minimum": 0.0,
+      "title": "Deadline Violated Compute Units",
+      "type": "number"
+    },
+    "compute_power_mw": {
+      "minimum": 0.0,
+      "title": "Compute Power Mw",
+      "type": "number"
+    },
+    "cooling_power_mw": {
+      "minimum": 0.0,
+      "title": "Cooling Power Mw",
+      "type": "number"
+    },
+    "auxiliary_power_mw": {
+      "minimum": 0.0,
+      "title": "Auxiliary Power Mw",
+      "type": "number"
+    },
+    "facility_temperature_c": {
+      "minimum": -273.15,
+      "title": "Facility Temperature C",
+      "type": "number"
+    },
+    "ambient_temperature_c": {
+      "minimum": -273.15,
+      "title": "Ambient Temperature C",
+      "type": "number"
+    },
+    "battery_energy_mwh": {
+      "minimum": 0.0,
+      "title": "Battery Energy Mwh",
+      "type": "number"
+    },
+    "battery_capacity_mwh": {
+      "minimum": 0.0,
+      "title": "Battery Capacity Mwh",
+      "type": "number"
+    },
+    "battery_state_of_charge": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Battery State Of Charge",
+      "type": "number"
+    },
+    "battery_power_mw": {
+      "title": "Battery Power Mw",
+      "type": "number"
+    },
+    "generator_power_mw": {
+      "minimum": 0.0,
+      "title": "Generator Power Mw",
+      "type": "number"
+    },
+    "generator_is_on": {
+      "title": "Generator Is On",
+      "type": "boolean"
+    },
+    "generator_available": {
+      "title": "Generator Available",
+      "type": "boolean"
+    },
+    "generator_consecutive_on_steps": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Generator Consecutive On Steps",
+      "type": "integer"
+    },
+    "generator_consecutive_off_steps": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Generator Consecutive Off Steps",
+      "type": "integer"
+    },
+    "grid_power_mw": {
+      "title": "Grid Power Mw",
+      "type": "number"
+    },
+    "grid_available": {
+      "title": "Grid Available",
+      "type": "boolean"
+    },
+    "grid_import_limit_mw": {
+      "minimum": 0.0,
+      "title": "Grid Import Limit Mw",
+      "type": "number"
+    },
+    "grid_export_limit_mw": {
+      "minimum": 0.0,
+      "title": "Grid Export Limit Mw",
+      "type": "number"
+    },
+    "electricity_price_usd_per_mwh": {
+      "title": "Electricity Price Usd Per Mwh",
+      "type": "number"
+    },
+    "grid_carbon_intensity_kg_co2e_per_mwh": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Grid Carbon Intensity Kg Co2E Per Mwh"
+    },
+    "grid_stress_status": {
+      "$ref": "#/$defs/GridStressStatus",
+      "default": "normal"
+    },
+    "renewable_available_power_mw": {
+      "default": 0.0,
+      "minimum": 0.0,
+      "title": "Renewable Available Power Mw",
+      "type": "number"
+    },
+    "renewable_used_power_mw": {
+      "default": 0.0,
+      "minimum": 0.0,
+      "title": "Renewable Used Power Mw",
+      "type": "number"
+    },
+    "curtailed_power_mw": {
+      "default": 0.0,
+      "minimum": 0.0,
+      "title": "Curtailed Power Mw",
+      "type": "number"
+    },
+    "unserved_power_mw": {
+      "default": 0.0,
+      "minimum": 0.0,
+      "title": "Unserved Power Mw",
+      "type": "number"
+    },
+    "power_balance_residual_mw": {
+      "default": 0.0,
+      "title": "Power Balance Residual Mw",
+      "type": "number"
+    },
+    "quality_flags": {
+      "additionalProperties": {
+        "$ref": "#/$defs/DataQualityFlag"
+      },
+      "title": "Quality Flags",
+      "type": "object"
+    }
+  },
+  "required": [
+    "site_id",
+    "state_id",
+    "timestamp_utc",
+    "step_index",
+    "timestep_seconds",
+    "workload_demand_compute_units_per_h",
+    "active_compute_capacity_compute_units_per_h",
+    "critical_backlog_compute_units",
+    "deferrable_backlog_compute_units",
+    "completed_compute_units",
+    "compute_power_mw",
+    "cooling_power_mw",
+    "auxiliary_power_mw",
+    "facility_temperature_c",
+    "ambient_temperature_c",
+    "battery_energy_mwh",
+    "battery_capacity_mwh",
+    "battery_state_of_charge",
+    "battery_power_mw",
+    "generator_power_mw",
+    "generator_is_on",
+    "generator_available",
+    "grid_power_mw",
+    "grid_available",
+    "grid_import_limit_mw",
+    "grid_export_limit_mw",
+    "electricity_price_usd_per_mwh"
+  ],
+  "title": "SiteObservationV1",
+  "type": "object"
+}

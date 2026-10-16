@@ -1,0 +1,378 @@
+{
+  "$defs": {
+    "ForecastPointV1": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "target_timestamp_utc": {
+          "format": "date-time",
+          "title": "Target Timestamp Utc",
+          "type": "string"
+        },
+        "workload_demand_compute_units_per_h": {
+          "minimum": 0.0,
+          "title": "Workload Demand Compute Units Per H",
+          "type": "number"
+        },
+        "deferrable_fraction": {
+          "default": 0.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Deferrable Fraction",
+          "type": "number"
+        },
+        "deferrable_deadline_steps": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Deferrable Deadline Steps",
+          "type": "integer"
+        },
+        "active_compute_capacity_compute_units_per_h": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active Compute Capacity Compute Units Per H"
+        },
+        "electricity_price_usd_per_mwh": {
+          "title": "Electricity Price Usd Per Mwh",
+          "type": "number"
+        },
+        "ambient_temperature_c": {
+          "minimum": -273.15,
+          "title": "Ambient Temperature C",
+          "type": "number"
+        },
+        "grid_available": {
+          "default": true,
+          "title": "Grid Available",
+          "type": "boolean"
+        },
+        "grid_import_limit_mw": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grid Import Limit Mw"
+        },
+        "grid_export_limit_mw": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grid Export Limit Mw"
+        },
+        "grid_carbon_intensity_kg_co2e_per_mwh": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grid Carbon Intensity Kg Co2E Per Mwh"
+        },
+        "grid_stress_status": {
+          "$ref": "#/$defs/GridStressStatus",
+          "default": "normal"
+        },
+        "renewable_available_power_mw": {
+          "default": 0.0,
+          "minimum": 0.0,
+          "title": "Renewable Available Power Mw",
+          "type": "number"
+        },
+        "prediction_intervals": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PredictionIntervalV1"
+          },
+          "title": "Prediction Intervals",
+          "type": "array"
+        }
+      },
+      "required": [
+        "target_timestamp_utc",
+        "workload_demand_compute_units_per_h",
+        "electricity_price_usd_per_mwh",
+        "ambient_temperature_c"
+      ],
+      "title": "ForecastPointV1",
+      "type": "object"
+    },
+    "ForecastSignal": {
+      "enum": [
+        "workload_demand_compute_units_per_h",
+        "active_compute_capacity_compute_units_per_h",
+        "electricity_price_usd_per_mwh",
+        "ambient_temperature_c",
+        "grid_import_limit_mw",
+        "grid_export_limit_mw",
+        "grid_carbon_intensity_kg_co2e_per_mwh",
+        "renewable_available_power_mw"
+      ],
+      "title": "ForecastSignal",
+      "type": "string"
+    },
+    "GridStressStatus": {
+      "enum": [
+        "normal",
+        "elevated",
+        "emergency",
+        "outage",
+        "unknown"
+      ],
+      "title": "GridStressStatus",
+      "type": "string"
+    },
+    "PredictionIntervalV1": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "signal": {
+          "$ref": "#/$defs/ForecastSignal"
+        },
+        "lower_value": {
+          "title": "Lower Value",
+          "type": "number"
+        },
+        "upper_value": {
+          "title": "Upper Value",
+          "type": "number"
+        },
+        "coverage_probability": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Coverage Probability",
+          "type": "number"
+        }
+      },
+      "required": [
+        "signal",
+        "lower_value",
+        "upper_value",
+        "coverage_probability"
+      ],
+      "title": "PredictionIntervalV1",
+      "type": "object"
+    },
+    "ProvenanceV1": {
+      "additionalProperties": false,
+      "description": "Origin metadata retained with external or synthetic observations.",
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Source Name",
+          "type": "string"
+        },
+        "source_uri": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Uri"
+        },
+        "source_record_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Record Id"
+        },
+        "source_timestamp_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Timestamp Utc"
+        },
+        "source_timezone": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Timezone"
+        },
+        "ingested_at_utc": {
+          "format": "date-time",
+          "title": "Ingested At Utc",
+          "type": "string"
+        },
+        "license_identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License Identifier"
+        },
+        "is_synthetic": {
+          "default": false,
+          "title": "Is Synthetic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "source_name",
+        "ingested_at_utc"
+      ],
+      "title": "ProvenanceV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Forecast values that were available at one explicit issuance time.",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "forecast_id": {
+      "format": "uuid",
+      "title": "Forecast Id",
+      "type": "string"
+    },
+    "site_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$",
+      "title": "Site Id",
+      "type": "string"
+    },
+    "issued_at_utc": {
+      "format": "date-time",
+      "title": "Issued At Utc",
+      "type": "string"
+    },
+    "valid_from_utc": {
+      "format": "date-time",
+      "title": "Valid From Utc",
+      "type": "string"
+    },
+    "valid_until_utc": {
+      "format": "date-time",
+      "title": "Valid Until Utc",
+      "type": "string"
+    },
+    "cadence_seconds": {
+      "exclusiveMinimum": 0.0,
+      "title": "Cadence Seconds",
+      "type": "number"
+    },
+    "model_name": {
+      "maxLength": 512,
+      "minLength": 1,
+      "title": "Model Name",
+      "type": "string"
+    },
+    "model_version": {
+      "maxLength": 512,
+      "minLength": 1,
+      "title": "Model Version",
+      "type": "string"
+    },
+    "points": {
+      "items": {
+        "$ref": "#/$defs/ForecastPointV1"
+      },
+      "minItems": 1,
+      "title": "Points",
+      "type": "array"
+    },
+    "provenance": {
+      "$ref": "#/$defs/ProvenanceV1"
+    },
+    "is_perfect_hindsight": {
+      "default": false,
+      "title": "Is Perfect Hindsight",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "forecast_id",
+    "site_id",
+    "issued_at_utc",
+    "valid_from_utc",
+    "valid_until_utc",
+    "cadence_seconds",
+    "model_name",
+    "model_version",
+    "points",
+    "provenance"
+  ],
+  "title": "ForecastBundleV1",
+  "type": "object"
+}

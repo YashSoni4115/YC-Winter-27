@@ -1,0 +1,315 @@
+{
+  "$defs": {
+    "ConstraintKind": {
+      "enum": [
+        "battery_soc",
+        "battery_power",
+        "generator_power",
+        "generator_ramp",
+        "grid_import",
+        "grid_export",
+        "grid_availability",
+        "compute_capacity",
+        "cooling_capacity",
+        "temperature",
+        "power_balance",
+        "workload_deadline",
+        "action_validity",
+        "telemetry_quality",
+        "forecast_freshness",
+        "other"
+      ],
+      "title": "ConstraintKind",
+      "type": "string"
+    },
+    "ConstraintMetadataV1": {
+      "additionalProperties": false,
+      "description": "A constraint considered by a planner or checked by a shield.",
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "constraint_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$",
+          "title": "Constraint Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ConstraintKind"
+        },
+        "description": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "lower_bound": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lower Bound"
+        },
+        "upper_bound": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Upper Bound"
+        },
+        "observed_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Observed Value"
+        },
+        "satisfied": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Satisfied"
+        },
+        "severity": {
+          "$ref": "#/$defs/ConstraintSeverity",
+          "default": "critical"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "kind",
+        "description"
+      ],
+      "title": "ConstraintMetadataV1",
+      "type": "object"
+    },
+    "ConstraintSeverity": {
+      "enum": [
+        "info",
+        "warning",
+        "critical"
+      ],
+      "title": "ConstraintSeverity",
+      "type": "string"
+    },
+    "SafetyReasonCode": {
+      "enum": [
+        "within_constraints",
+        "battery_soc_limit",
+        "battery_power_limit",
+        "generator_power_limit",
+        "generator_ramp_limit",
+        "grid_import_limit",
+        "grid_export_limit",
+        "grid_unavailable",
+        "compute_capacity_limit",
+        "cooling_capacity_limit",
+        "temperature_limit",
+        "power_balance",
+        "stale_state",
+        "action_not_yet_valid",
+        "action_expired",
+        "invalid_action",
+        "missing_telemetry",
+        "communication_failure",
+        "shield_internal_error",
+        "other"
+      ],
+      "title": "SafetyReasonCode",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "A policy request, not permission to actuate equipment.\n\nBattery power is positive for discharge and negative for charge. Grid power\nis positive for import and negative for export. Loads and generation are\nnon-negative. A proposal may be infeasible; it must pass through a safety\nimplementation before it can be applied.",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "action_id": {
+      "format": "uuid",
+      "title": "Action Id",
+      "type": "string"
+    },
+    "site_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$",
+      "title": "Site Id",
+      "type": "string"
+    },
+    "based_on_state_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$",
+      "title": "Based On State Id",
+      "type": "string"
+    },
+    "created_at_utc": {
+      "format": "date-time",
+      "title": "Created At Utc",
+      "type": "string"
+    },
+    "effective_at_utc": {
+      "format": "date-time",
+      "title": "Effective At Utc",
+      "type": "string"
+    },
+    "expires_at_utc": {
+      "format": "date-time",
+      "title": "Expires At Utc",
+      "type": "string"
+    },
+    "compute_power_mw": {
+      "minimum": 0.0,
+      "title": "Compute Power Mw",
+      "type": "number"
+    },
+    "cooling_power_mw": {
+      "minimum": 0.0,
+      "title": "Cooling Power Mw",
+      "type": "number"
+    },
+    "battery_power_mw": {
+      "title": "Battery Power Mw",
+      "type": "number"
+    },
+    "generator_power_mw": {
+      "minimum": 0.0,
+      "title": "Generator Power Mw",
+      "type": "number"
+    },
+    "grid_power_mw": {
+      "title": "Grid Power Mw",
+      "type": "number"
+    },
+    "renewable_curtailment_mw": {
+      "default": 0.0,
+      "minimum": 0.0,
+      "title": "Renewable Curtailment Mw",
+      "type": "number"
+    },
+    "policy_name": {
+      "maxLength": 512,
+      "minLength": 1,
+      "title": "Policy Name",
+      "type": "string"
+    },
+    "policy_version": {
+      "maxLength": 512,
+      "minLength": 1,
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "planner_run_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Planner Run Id"
+    },
+    "is_fallback": {
+      "default": false,
+      "title": "Is Fallback",
+      "type": "boolean"
+    },
+    "fallback_reason": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SafetyReasonCode"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "constraint_metadata": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ConstraintMetadataV1"
+      },
+      "title": "Constraint Metadata",
+      "type": "array"
+    },
+    "rationale": {
+      "anyOf": [
+        {
+          "maxLength": 512,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rationale"
+    }
+  },
+  "required": [
+    "action_id",
+    "site_id",
+    "based_on_state_id",
+    "created_at_utc",
+    "effective_at_utc",
+    "expires_at_utc",
+    "compute_power_mw",
+    "cooling_power_mw",
+    "battery_power_mw",
+    "generator_power_mw",
+    "grid_power_mw",
+    "policy_name",
+    "policy_version"
+  ],
+  "title": "ProposedControlActionV1",
+  "type": "object"
+}

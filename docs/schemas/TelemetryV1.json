@@ -1,0 +1,552 @@
+{
+  "$defs": {
+    "DataQualityFlag": {
+      "description": "Per-value quality state used by telemetry and data pipelines.",
+      "enum": [
+        "good",
+        "estimated",
+        "imputed",
+        "missing",
+        "suspect",
+        "synthetic"
+      ],
+      "title": "DataQualityFlag",
+      "type": "string"
+    },
+    "DataQualityIssueV1": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "field_name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$",
+          "title": "Field Name",
+          "type": "string"
+        },
+        "flag": {
+          "$ref": "#/$defs/DataQualityFlag"
+        },
+        "reason": {
+          "$ref": "#/$defs/DataQualityReason"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        }
+      },
+      "required": [
+        "field_name",
+        "flag",
+        "reason"
+      ],
+      "title": "DataQualityIssueV1",
+      "type": "object"
+    },
+    "DataQualityReason": {
+      "description": "Machine-readable reasons behind a non-good quality flag.",
+      "enum": [
+        "source_missing",
+        "duplicate",
+        "outlier",
+        "stale",
+        "invalid_unit",
+        "impossible_value",
+        "timezone_ambiguous",
+        "imputed",
+        "source_error",
+        "other"
+      ],
+      "title": "DataQualityReason",
+      "type": "string"
+    },
+    "GridStressStatus": {
+      "enum": [
+        "normal",
+        "elevated",
+        "emergency",
+        "outage",
+        "unknown"
+      ],
+      "title": "GridStressStatus",
+      "type": "string"
+    },
+    "ProvenanceV1": {
+      "additionalProperties": false,
+      "description": "Origin metadata retained with external or synthetic observations.",
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Source Name",
+          "type": "string"
+        },
+        "source_uri": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Uri"
+        },
+        "source_record_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Record Id"
+        },
+        "source_timestamp_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Timestamp Utc"
+        },
+        "source_timezone": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Timezone"
+        },
+        "ingested_at_utc": {
+          "format": "date-time",
+          "title": "Ingested At Utc",
+          "type": "string"
+        },
+        "license_identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License Identifier"
+        },
+        "is_synthetic": {
+          "default": false,
+          "title": "Is Synthetic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "source_name",
+        "ingested_at_utc"
+      ],
+      "title": "ProvenanceV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "A possibly incomplete raw telemetry sample.\n\nMissing sensor readings are represented as ``None``.  If a field is listed\nin ``quality_flags`` as ``missing``, its value must be ``None``; conversely,\na present value cannot be labelled missing.  Complete control state is\nrepresented by :class:`SiteObservationV1`, not this ingestion boundary.",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "site_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$",
+      "title": "Site Id",
+      "type": "string"
+    },
+    "state_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$",
+      "title": "State Id",
+      "type": "string"
+    },
+    "timestamp_utc": {
+      "format": "date-time",
+      "title": "Timestamp Utc",
+      "type": "string"
+    },
+    "sequence_number": {
+      "minimum": 0,
+      "title": "Sequence Number",
+      "type": "integer"
+    },
+    "workload_demand_compute_units_per_h": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Workload Demand Compute Units Per H"
+    },
+    "active_compute_capacity_compute_units_per_h": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Active Compute Capacity Compute Units Per H"
+    },
+    "critical_backlog_compute_units": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Critical Backlog Compute Units"
+    },
+    "deferrable_backlog_compute_units": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Deferrable Backlog Compute Units"
+    },
+    "compute_power_mw": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Compute Power Mw"
+    },
+    "cooling_power_mw": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cooling Power Mw"
+    },
+    "auxiliary_power_mw": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Auxiliary Power Mw"
+    },
+    "facility_temperature_c": {
+      "anyOf": [
+        {
+          "minimum": -273.15,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Facility Temperature C"
+    },
+    "ambient_temperature_c": {
+      "anyOf": [
+        {
+          "minimum": -273.15,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ambient Temperature C"
+    },
+    "battery_energy_mwh": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Battery Energy Mwh"
+    },
+    "battery_state_of_charge": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Battery State Of Charge"
+    },
+    "battery_power_mw": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Battery Power Mw"
+    },
+    "generator_power_mw": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Generator Power Mw"
+    },
+    "generator_is_on": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Generator Is On"
+    },
+    "generator_available": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Generator Available"
+    },
+    "grid_power_mw": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Grid Power Mw"
+    },
+    "grid_available": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Grid Available"
+    },
+    "grid_import_limit_mw": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Grid Import Limit Mw"
+    },
+    "grid_export_limit_mw": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Grid Export Limit Mw"
+    },
+    "electricity_price_usd_per_mwh": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Electricity Price Usd Per Mwh"
+    },
+    "grid_carbon_intensity_kg_co2e_per_mwh": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Grid Carbon Intensity Kg Co2E Per Mwh"
+    },
+    "grid_stress_status": {
+      "$ref": "#/$defs/GridStressStatus",
+      "default": "unknown"
+    },
+    "renewable_available_power_mw": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Renewable Available Power Mw"
+    },
+    "renewable_used_power_mw": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Renewable Used Power Mw"
+    },
+    "provenance": {
+      "$ref": "#/$defs/ProvenanceV1"
+    },
+    "quality_flags": {
+      "additionalProperties": {
+        "$ref": "#/$defs/DataQualityFlag"
+      },
+      "title": "Quality Flags",
+      "type": "object"
+    },
+    "quality_issues": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/DataQualityIssueV1"
+      },
+      "title": "Quality Issues",
+      "type": "array"
+    }
+  },
+  "required": [
+    "site_id",
+    "state_id",
+    "timestamp_utc",
+    "sequence_number",
+    "provenance"
+  ],
+  "title": "TelemetryV1",
+  "type": "object"
+}
