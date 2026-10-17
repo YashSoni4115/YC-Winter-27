@@ -13,6 +13,9 @@ python -m energy_decision_layer serve --models artifacts/models
 # Open http://127.0.0.1:8000 (read-only until local tokens are configured)
 ```
 
+The standalone ML workstream package (`energy_ml`: quantile forecaster, behaviour-cloning
+policy, benchmarks) lives in [`ml/`](ml/README.md) and plugs in through the public protocols.
+
 The first demo trains missing local models and writes auditable results under
 ignored `artifacts/`. Use a fresh demo output directory for another run. See the
 [runbook](docs/SYSTEM.md) for training, authorization, evaluations and tests. The
