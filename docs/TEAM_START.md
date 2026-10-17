@@ -1,3 +1,11 @@
+# Current team checkpoint
+
+The workstreams are integrated. Start with [SYSTEM.md](SYSTEM.md) and the `demo`
+command; use `ml.ForecastProvider`, `ml.LearnedPolicy`, `safety.SafetyShield`, and
+`service.runtime.SimulationRuntime` for real local implementations. The original
+factory handoff below remains available to test custom integrations and explicitly
+uses development doubles unless factories are replaced.
+
 # First checkpoint for the other two workstreams
 
 Devansh's side supplies an installable package, the physics/Gym environment, data schemas/pipeline, baseline policies/planner, a dispatcher, evaluation metrics, schema examples, offline integration doubles and CI. Both teammates can start against these interfaces immediately. Their production logic remains theirs to implement.

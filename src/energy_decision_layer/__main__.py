@@ -25,11 +25,80 @@ def main() -> None:
     etl.add_argument("--source-url")
     schema = commands.add_parser("schemas")
     schema.add_argument("--output", default="docs/schemas")
+    synthetic = commands.add_parser("synthetic", help="generate labelled normalized fixture data")
+    synthetic.add_argument("--output", type=Path, default=Path("artifacts/synthetic.jsonl"))
+    synthetic.add_argument("--steps", type=int, default=2016)
+    synthetic.add_argument("--seed", type=int, default=7)
+    for name in ("train-all", "train-forecast", "train-policy", "train-surrogates"):
+        train = commands.add_parser(name)
+        train.add_argument("--data", type=Path, help="normalized SimulationIntervalV1 JSONL")
+        train.add_argument("--output", type=Path, default=Path("artifacts/models"))
+        train.add_argument("--steps", type=int, default=2016, help="synthetic training intervals")
+        train.add_argument("--seed", type=int, default=7)
+        train.add_argument("--config", type=Path)
+    evaluation = commands.add_parser("evaluate-ml")
+    evaluation.add_argument("--models", type=Path, default=Path("artifacts/models"))
+    evaluation.add_argument("--output", type=Path, default=Path("artifacts/ml-evaluation"))
+    evaluation.add_argument("--steps", type=int, default=24)
+    evaluation.add_argument("--seed", type=int, default=7)
+    demo = commands.add_parser("demo")
+    demo.add_argument("--models", type=Path, default=Path("artifacts/models"))
+    demo.add_argument("--output", type=Path, default=Path("artifacts/demo"))
+    demo.add_argument("--steps", type=int, default=24)
+    demo.add_argument("--seed", type=int, default=7)
+    serve = commands.add_parser("serve")
+    serve.add_argument("--models", type=Path, default=Path("artifacts/models"))
+    serve.add_argument("--database", type=Path, default=Path("artifacts/decisions.sqlite3"))
+    serve.add_argument("--data", type=Path)
+    serve.add_argument("--steps", type=int, default=288)
+    serve.add_argument("--host", default="127.0.0.1")
+    serve.add_argument("--port", type=int, default=8000)
     args = parser.parse_args()
-    if args.command == "benchmark":
+    if args.command == "synthetic":
+        from .workflows import generate_dataset
+
+        rows = generate_dataset(args.output, steps=args.steps, seed=args.seed)
+        print(f"{len(rows)} labelled synthetic intervals written to {args.output}")
+    elif args.command.startswith("train-"):
+        from .workflows import train_components
+
+        result = train_components(
+            args.command,
+            args.output,
+            data=args.data,
+            steps=args.steps,
+            seed=args.seed,
+            config=args.config,
+        )
+        print(json.dumps(result, indent=2, allow_nan=False))
+    elif args.command == "evaluate-ml":
+        from .evaluation.integrated import run_ml_evaluation
+
+        report = run_ml_evaluation(args.models, args.output, steps=args.steps, seed=args.seed)
+        print(f"Evaluation report: {args.output}/summary.md; failed runs={report['failed_runs']}")
+        if report["unexpected_failures"]:
+            raise SystemExit("unexpected evaluation failures; inspect ml-evaluation.json")
+    elif args.command == "demo":
+        from .workflows import run_demo
+
+        report = run_demo(args.models, args.output, steps=args.steps, seed=args.seed)
+        print(f"Integrated simulation completed {report['steps']} steps: {args.output}/demo.json")
+    elif args.command == "serve":
+        import uvicorn
+
+        from .service.api import create_app
+        from .workflows import create_runtime
+
+        runtime = create_runtime(args.models, args.database, steps=args.steps, data=args.data)
+        try:
+            uvicorn.run(create_app(runtime), host=args.host, port=args.port, workers=1)
+        finally:
+            runtime.close()
+    elif args.command == "benchmark":
         from .evaluation.policies import FixedPolicy
         from .evaluation.runner import evaluate, scenarios, write_reports
         from .optimizer import MilpPolicy, RulePolicy
+        from .safety import SafetyShield
         from .sim import SiteConfig
         from .testing.doubles import OfflineHindsightForecastDouble
 
@@ -57,11 +126,15 @@ def main() -> None:
             "synthetic": True,
             "horizon_steps": 12,
             "scenario_steps": args.steps,
-            "shield": "DEVELOPMENT-ACCEPT-ALL-NOT-SAFE",
+            "shield": SafetyShield.name,
+            "safety_stopped_runs": sum(r.failed and r.shield_rejections > 0 for r in results),
+            "unexpected_failures": sum(r.failed and r.shield_rejections == 0 for r in results),
         }
         (Path(args.output) / "run.json").write_text(json.dumps(metadata, indent=2) + "\n")
         print(f"{len(results)} evaluations written to {args.output}")
-        if any(r.failed for r in results):
+        if metadata["safety_stopped_runs"]:
+            print(f"{metadata['safety_stopped_runs']} runs stopped by safety; inspect metrics.json")
+        if metadata["unexpected_failures"]:
             raise SystemExit("one or more evaluations failed; inspect metrics.json")
     elif args.command == "etl":
         import hashlib

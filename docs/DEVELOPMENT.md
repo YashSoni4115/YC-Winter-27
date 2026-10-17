@@ -1,3 +1,9 @@
+# Current integrated workflow
+
+Use [SYSTEM.md](SYSTEM.md) for the complete application, model training, dashboard,
+authorization and verification commands. The foundation-only workflow below is
+retained for focused work; its explicit test doubles remain development examples.
+
 # Running Devansh's foundation
 
 Python 3.10–3.12 is targeted. Use a virtual environment; no system packages or API keys are required for offline work.
