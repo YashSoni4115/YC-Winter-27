@@ -1,0 +1,4 @@
+artifacts/*.joblib
+artifacts/*.log
+__pycache__/
+*.egg-info/

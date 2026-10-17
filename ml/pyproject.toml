@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=59", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "energy-ml"
+version = "0.1.0"
+description = "ML workstream: leakage-safe calibrated forecasting and learned control for the energy decision layer"
+requires-python = ">=3.10"
+dependencies = [
+  "energy-decision-layer",
+  "numpy>=1.26,<3",
+  "pandas>=2.2,<3",
+  "scikit-learn>=1.4,<2",
+  "joblib>=1.3",
+]
+
+[tool.setuptools.packages.find]
+include = ["energy_ml*"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-config"
+testpaths = ["tests"]
