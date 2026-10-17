@@ -19,11 +19,17 @@ dependencies = [
 sim = ["gymnasium>=1.0,<2"]
 data = ["pandas>=2.2,<3", "pyarrow>=15,<22"]
 optimizer = ["scipy>=1.13,<2"]
+ml = ["scikit-learn>=1.5,<1.8", "scipy>=1.13,<2"]
+service = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1"]
+browser = ["playwright>=1.50,<2"]
 all = [
   "gymnasium>=1.0,<2",
   "pandas>=2.2,<3",
   "pyarrow>=15,<22",
   "scipy>=1.13,<2",
+  "scikit-learn>=1.5,<1.8",
+  "fastapi>=0.115,<1",
+  "uvicorn>=0.30,<1",
 ]
 dev = [
   "gymnasium>=1.0,<2",
@@ -35,6 +41,10 @@ dev = [
   "pytest-cov>=5,<8",
   "ruff>=0.8,<1",
   "scipy>=1.13,<2",
+  "scikit-learn>=1.5,<1.8",
+  "fastapi>=0.115,<1",
+  "uvicorn>=0.30,<1",
+  "httpx>=0.27,<1",
 ]
 
 [tool.setuptools]
@@ -45,6 +55,7 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 energy_decision_layer = ["py.typed"]
+"energy_decision_layer.service" = ["static/*", "migrations/*.sql"]
 
 [tool.pytest.ini_options]
 addopts = "-ra --strict-config --strict-markers"
@@ -88,5 +99,5 @@ packages = ["energy_decision_layer"]
 
 
 [[tool.mypy.overrides]]
-module = ["pandas", "scipy.*"]
+module = ["pandas", "scipy.*", "sklearn.*"]
 ignore_missing_imports = true

@@ -2,7 +2,21 @@
 
 A software layer that decides, continuously and autonomously, how electrical power is distributed *inside* an AI data centre site: between compute, cooling, on-site storage, on-site generation, and the grid connection.
 
-> Status: the design below remains a set of hypotheses. An offline Python simulation, data, MILP planning, dispatch and evaluation foundation is implemented. Start with [developer setup](docs/DEVELOPMENT.md), [team integration](docs/INTEGRATION.md), and [verified progress](chat.md). Production ML, safety, backend, UI and plant integrations remain separate teammate workstreams.
+> Status: the repository now includes an integrated **simulation-only application**: forecasting, simulator-trained dispatch, advisory dynamics surrogates, coupled safety validation, mock controllers, persistent decision logging, a typed API, and an operator dashboard built on the existing simulator/data/MILP foundation. Start with [the system runbook](docs/SYSTEM.md), [ML methodology](docs/ML.md), and [implementation report](docs/IMPLEMENTATION_REPORT.md). Models and site parameters use labelled synthetic data; physical control is unsupported.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -c requirements-dev.lock -e '.[dev]' build
+python -m energy_decision_layer demo --steps 24 --output artifacts/demo
+python -m energy_decision_layer serve --models artifacts/models
+# Open http://127.0.0.1:8000 (read-only until local tokens are configured)
+```
+
+The first demo trains missing local models and writes auditable results under
+ignored `artifacts/`. Use a fresh demo output directory for another run. See the
+[runbook](docs/SYSTEM.md) for training, authorization, evaluations and tests. The
+original design and longer-term physical-integration roadmap follow below.
 
 ---
 

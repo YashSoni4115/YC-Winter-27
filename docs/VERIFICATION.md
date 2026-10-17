@@ -1,3 +1,10 @@
+# Integrated verification — 2026-10-17
+
+Current results and limitations are recorded in [IMPLEMENTATION_REPORT.md](IMPLEMENTATION_REPORT.md).
+The integrated suite passes 198 tests; the dashboard, APIs, durable decisions, ML,
+shield and adapters now connect to the existing foundation. Historical results
+below describe the earlier implementation and its explicitly named doubles.
+
 # Verification and handoff — 2026-10-15
 
 Devansh's offline foundation is implemented and locally verified. Production forecasting/learned control, safety, backend, durable logging, UI and equipment integrations remain teammate work. Passing the offline suite is not a production safety or calibration claim.

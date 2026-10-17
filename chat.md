@@ -1,5 +1,15 @@
 # Devansh Workstream Engineering Memory
 
+## Integration update — 2026-10-17
+
+Yash and Dharm workstreams are implemented in `ml`, `safety`, `adapters`, and
+`service`. The full simulation-only system is integrated and locally tested.
+Current instructions: `docs/SYSTEM.md`; methodology: `docs/ML.md`; complete
+verification, measured outcomes, limitations and run commands:
+`docs/IMPLEMENTATION_REPORT.md`. Below remains the historical foundation journal.
+No remote push or production deployment was performed in this integration task.
+
+
 ## Project Status
 
 Current milestone: M9 — Final verification and handoff (Devansh offline scope delivered; real integrations pending)

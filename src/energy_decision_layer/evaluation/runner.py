@@ -14,6 +14,7 @@ from energy_decision_layer.contracts import (
     ForecastProviderProtocol,
     PolicyProtocol,
     SafetyShieldProtocol,
+    SiteSimulatorProtocol,
 )
 from energy_decision_layer.optimizer.dispatcher import (
     Dispatcher,
@@ -21,9 +22,9 @@ from energy_decision_layer.optimizer.dispatcher import (
     DispatchStopped,
 )
 from energy_decision_layer.optimizer.planner import RulePolicy
+from energy_decision_layer.safety import SafetyShield
 from energy_decision_layer.sim import SiteConfig, SiteInputs, SiteSimulator
 from energy_decision_layer.testing.doubles import (
-    DevelopmentAcceptAllShield,
     InMemoryDecisionLogger,
     PersistenceForecastDouble,
 )
@@ -105,14 +106,16 @@ def evaluate(
     policy_label: str | None = None,
     shield: SafetyShieldProtocol | None = None,
     decision_logger: DecisionLoggerProtocol | None = None,
+    execution_adapter: Callable[[SiteSimulator], SiteSimulatorProtocol] | None = None,
 ) -> Metrics:
     sim = SiteSimulator(inputs, config)
     o, _ = sim.reset(seed=seed)
+    execution_target = execution_adapter(sim) if execution_adapter is not None else sim
     policy = factory()
     logger = decision_logger if decision_logger is not None else InMemoryDecisionLogger()
     dispatcher = Dispatcher(
         policy,
-        shield if shield is not None else DevelopmentAcceptAllShield(),
+        shield if shield is not None else SafetyShield(sim.config),
         logger,
         RulePolicy(sim.config),
         forecaster if forecaster is not None else PersistenceForecastDouble(),
@@ -125,7 +128,7 @@ def evaluate(
     while not sim.done:
         try:
             dispatcher.horizon_steps = min(12, len(inputs) - sim.index)
-            o, _, terminated, _, info = dispatcher.dispatch(o, sim)
+            o, _, terminated, _, info = dispatcher.dispatch(o, execution_target)
             records.append(info)
             if terminated:
                 error = "simulator terminated before scenario end"

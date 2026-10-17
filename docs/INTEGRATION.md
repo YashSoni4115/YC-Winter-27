@@ -1,3 +1,11 @@
+# Integrated implementation update — 2026-10-17
+
+Yash and Dharm implementations now live in `ml`, `safety`, `adapters` and `service`,
+using the contracts documented below. [SYSTEM.md](SYSTEM.md) describes the runnable
+application; [ML.md](ML.md) documents models. Historical statements below that real
+components were absent describe the original foundation handoff. The simulator
+and physics remain simulation models, and physical equipment integration is absent.
+
 # Team handoff and version 1 contracts
 
 Devansh owns `contracts`, `sim`, `data`, `optimizer`, `evaluation`, `testing`, tests and CI. No real forecasting, learned controller, safety shield, backend, UI, or plant adapter is implemented in this branch. Teammates can develop in separate packages and import these boundaries; they need not edit the physics or scoring code.

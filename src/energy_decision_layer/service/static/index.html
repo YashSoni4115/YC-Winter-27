@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Energy Decision Layer · Simulation</title><link rel="stylesheet" href="/static/style.css"></head>
+<body>
+<header><div><h1>Energy Decision Layer</h1><p>Operator console · synthetic site simulator</p></div><span id="connection" role="status">Loading…</span></header>
+<main>
+<div class="notice">SIMULATION ONLY · No physical equipment is connected. Commands advance one simulated interval. Power MW · energy MWh · prices USD/MWh · timestamps UTC.</div>
+<div id="error" role="alert" hidden></div>
+<section aria-labelledby="overview-title"><h2 id="overview-title">System overview</h2><p id="timestamp">Loading telemetry…</p><div id="overview" class="cards"></div></section>
+<section aria-labelledby="control-title"><h2 id="control-title">Dispatch controls</h2>
+<div class="controls"><label>Bearer token <input id="token" type="password" autocomplete="off" placeholder="Optional local session token"></label><button id="authenticate">Apply token</button><label>Policy <select id="policy"><option>baseline</option><option>rule</option></select></label><button id="recommend">Preview decision</button><button id="dispatch" disabled>Execute simulated step</button></div>
+<p id="permissions">Loading permissions…</p><div class="decision"><div><h3>Proposed action</h3><pre id="proposal">No proposal loaded.</pre></div><div><h3>Safety and execution</h3><pre id="verdict">No decision loaded.</pre></div></div>
+<details><summary>Operator manual override</summary><p>Edit a proposal with current state and validity timestamps. Every request passes the same safety shield. Rejected requests never execute.</p><textarea id="manual" rows="15" aria-label="Manual action JSON"></textarea><div class="controls"><button id="validate">Validate without execution</button><button id="override" disabled>Submit simulated override</button></div></details>
+</section>
+<section aria-labelledby="forecast-title"><h2 id="forecast-title">Forecasts and uncertainty</h2><p id="forecast-meta">Loading forecasts…</p><div id="forecasts" class="charts"></div><p id="stress">Grid-stress probabilities unavailable until a labelled classifier is trained.</p></section>
+<section aria-labelledby="history-title"><h2 id="history-title">Dispatch history</h2><p>Only records with execution status “executed” advanced the simulator.</p><div class="table-wrap"><table><thead><tr><th>Timestamp UTC</th><th>Policy</th><th>Shield</th><th>Execution</th><th>Reason</th><th>Cost USD</th></tr></thead><tbody id="history"></tbody></table></div><details><summary>Inspect selected decision</summary><pre id="detail">Select a history row.</pre></details></section>
+<section aria-labelledby="metrics-title"><h2 id="metrics-title">Operating performance</h2><p>History below uses actual logged outcomes. Fair baseline versus learned comparisons require the same seeded offline scenario.</p><div id="metrics" class="table-wrap">Loading metrics…</div>
+<h3>Seeded policy comparison</h3><p id="evaluation-scope">Loading saved evaluation…</p>
+<label>Evaluation scenario <select id="evaluation-scenario" disabled aria-controls="evaluation-comparison"></select></label>
+<p>Compare completed compute, missed work, terminal battery energy, and stopped runs alongside cost. A cheaper incomplete run does not demonstrate better performance.</p>
+<div id="evaluation-comparison" class="table-wrap">No evaluation report available yet. Run the documented evaluation command.</div>
+<h3>Held-out forecast accuracy</h3><p id="forecast-accuracy-scope">Model test-set metrics, with persistence and seasonal-naive baselines.</p><div id="forecast-accuracy" class="table-wrap">No forecast evaluation available.</div>
+<details><summary>Inspect complete evaluation report</summary><pre id="evaluation">No evaluation report available.</pre></details></section>
+</main><footer>Local simulation console · <a href="/docs">API documentation</a></footer>
+<script src="/static/app.js" defer></script>
+</body></html>
